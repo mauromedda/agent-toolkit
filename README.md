@@ -72,6 +72,9 @@ agent-toolkit/
 ├── README.md                 # This file
 ├── LICENSE                   # MIT License
 ├── CLAUDE.md-example         # Example CLAUDE.md configuration
+├── scripts/                  # Helper scripts
+│   ├── statusline.sh         # Custom status line script
+│   └── settings-statusline.json  # Settings snippet for status line
 └── skills/                   # Claude Code skills
     ├── design-patterns/      # Cross-language architectural patterns (skill)
     ├── ast-grep/             # AST-aware code search patterns
@@ -137,6 +140,53 @@ To use:
 ```bash
 cp CLAUDE.md-example ~/.claude/CLAUDE.md
 # Edit the file to customize for your workflow
+```
+
+## Custom Status Line
+
+A custom status line script that displays model info, working directory, git branch, session cost, and context usage.
+
+<p align="center">
+  <img src="assets/statusline.png" alt="Custom Status Line showing model, directory, branch, cost and context" width="800">
+</p>
+
+The status line shows:
+- **Model**: Current Claude model (e.g., Opus 4.5)
+- **Directory**: Current working directory (with `~` for home)
+- **Git Branch**: Active branch when in a git repository
+- **Cost**: Session cost in USD
+- **Context**: Token usage and percentage of context window
+
+### Installation
+
+```bash
+# Copy the status line script
+mkdir -p ~/.claude/scripts
+cp scripts/statusline.sh ~/.claude/scripts/
+chmod +x ~/.claude/scripts/statusline.sh
+```
+
+### Configuration
+
+Add the following to your `~/.claude/settings.json`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/scripts/statusline.sh",
+    "padding": 0
+  }
+}
+```
+
+Or merge the provided snippet:
+
+```bash
+# If you don't have a settings.json yet
+cp scripts/settings-statusline.json ~/.claude/settings.json
+
+# If you already have one, manually merge the statusLine section
 ```
 
 ## Skill Usage
