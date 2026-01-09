@@ -9,7 +9,9 @@ description: >-
   "git reset", "git checkout", "git switch", "git restore", "git tag", "git remote",
   "git fetch", "git pull", "git push", "git branch", "conventional commits", "squash",
   "force push", "git hooks", "pre-commit", "commit-msg", "gitignore", "git submodule",
-  "git worktree", "feature branch", "trunk based", "git flow", "github flow".
+  "git worktree", "feature branch", "trunk based", "git flow", "github flow",
+  "commit and push", "commit changes", "push changes", "push to remote",
+  "commit this", "commit these", "make a commit", "create commit".
   PROACTIVE: MUST invoke when performing complex Git operations or setting up workflows.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
