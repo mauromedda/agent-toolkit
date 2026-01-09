@@ -14,6 +14,31 @@ Agent Toolkit provides a curated set of resources to enhance Claude Code's capab
 - **Patterns**: Cross-language architectural patterns and best practices
 - **Workflows**: Integrated development workflows (TDD, security scanning, code review)
 
+## Prerequisites
+
+Some skills include helper scripts that require external tools. Install via Homebrew:
+
+```bash
+# Required: Python package manager (for running skill scripts)
+brew install uv
+
+# Required: Python with PyYAML (for skill validation)
+uv tool install pyyaml
+
+# Optional: Language-specific tools
+brew install go              # For golang skill
+brew install shellcheck      # For bash skill
+brew install terraform       # For terraform skill
+brew install trivy           # For security scanning
+brew install node            # For web-automation (Playwright)
+```
+
+**Python dependencies** for skill scripts:
+
+| Skill | Dependencies | Install |
+|-------|--------------|---------|
+| skill-creator | PyYAML | `cd skills/skill-creator && uv sync` |
+
 ## Quick Start
 
 ### Installation
@@ -203,6 +228,24 @@ allowed-tools: Read, Write, Edit, Bash
 - **Opinionated**: Best practices are baked in, not optional
 - **Integrated**: Skills work together (security + commit + review)
 - **Progressive Disclosure**: Core info in SKILL.md; details in references
+
+## Security
+
+Skills can execute scripts on your system via Claude Code. Before using third-party skills:
+
+1. **Audit all scripts** in `scripts/` directories before execution
+2. **Review SKILL.md** files for any suspicious tool permissions
+3. **Check `allowed-tools`** in frontmatter (especially `Bash` permissions)
+
+The skills in this repository have been reviewed, but you should always verify code that runs on your machine.
+
+```bash
+# List all executable scripts in a skill
+find ~/.claude/skills/<skill-name>/scripts -type f -executable
+
+# Review a script before running
+cat ~/.claude/skills/<skill-name>/scripts/<script>.py
+```
 
 ## Contributing
 
