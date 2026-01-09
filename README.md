@@ -16,6 +16,8 @@ Agent Toolkit provides a curated set of resources to enhance Claude Code's capab
 
 ## Prerequisites
 
+> **Tested on:** macOS (Darwin). Linux should work; Windows may require adjustments for shell-based tools.
+
 Some skills include helper scripts that require external tools. Install via Homebrew:
 
 ```bash
