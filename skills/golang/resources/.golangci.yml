@@ -1,0 +1,282 @@
+# ABOUTME: golangci-lint configuration for Go 1.26+ projects
+# ABOUTME: Enforces idiomatic Go patterns and 2025 best practices
+
+run:
+  # Minimum Go version supported
+  go: "1.22"
+  # Timeout for analysis
+  timeout: 5m
+  # Include test files
+  tests: true
+  # Module download mode
+  modules-download-mode: readonly
+  # Allow parallel runners
+  allow-parallel-runners: true
+
+output:
+  # Output format
+  formats:
+    - format: colored-line-number
+  # Print lines of code with issue
+  print-issued-lines: true
+  # Print linter name
+  print-linter-name: true
+  # Make issues output unique
+  uniq-by-line: true
+  # Sort results for consistency
+  sort-results: true
+
+linters:
+  # Disable all linters, then enable selectively
+  disable-all: true
+  enable:
+    # Default linters (always enabled)
+    - errcheck       # Check for unchecked errors
+    - gosimple       # Simplify code
+    - govet          # Examine Go source code
+    - ineffassign    # Detect ineffective assignments
+    - staticcheck    # Advanced static analysis
+    - unused         # Find unused code
+
+    # Error handling
+    - errorlint      # Find issues with error wrapping
+    - errname        # Check error naming conventions
+    - nilerr         # Find nil error returns
+    - wrapcheck      # Check error wrapping in public functions
+
+    # Code quality
+    - bodyclose      # Check HTTP response body is closed
+    - contextcheck   # Check context propagation
+    - dupl           # Find duplicated code
+    - goconst        # Find repeated strings for constants
+    - gocritic       # Opinionated linter
+    - gocyclo        # Cyclomatic complexity
+    - gofmt          # Check formatting
+    - goimports      # Check imports
+    - misspell       # Find misspellings
+    - prealloc       # Find slice preallocations
+    - unconvert      # Find unnecessary conversions
+    - unparam        # Find unused parameters
+    - wastedassign   # Find wasted assignments
+    - whitespace     # Find whitespace issues
+
+    # Security
+    - gosec          # Security checks
+
+    # Style
+    - godot          # Check comments end with period
+    - revive         # Fast, configurable linter
+    - stylecheck     # Style checks
+
+    # SQL/Database
+    - rowserrcheck   # Check sql.Rows error handling
+    - sqlclosecheck  # Check sql.Rows is closed
+
+    # Testing
+    - testifylint    # Testify best practices
+    - tparallel      # Check t.Parallel() usage
+
+    # Type safety
+    - forcetypeassert # Find forced type assertions
+    - noctx           # Find HTTP requests without context
+
+linters-settings:
+  errcheck:
+    # Check type assertions
+    check-type-assertions: true
+    # Check blank identifier assignments
+    check-blank: true
+    # Exclude certain functions
+    exclude-functions:
+      - (io.Closer).Close
+      - (net/http.ResponseWriter).Write
+
+  govet:
+    # Enable all analyzers
+    enable-all: true
+    disable:
+      # Fieldalignment is too noisy
+      - fieldalignment
+
+  gocyclo:
+    # Complexity threshold
+    min-complexity: 15
+
+  dupl:
+    # Token threshold for duplication
+    threshold: 100
+
+  goconst:
+    # Minimum length of string
+    min-len: 3
+    # Minimum occurrences
+    min-occurrences: 3
+    # Ignore test files
+    ignore-tests: true
+
+  gocritic:
+    # Enable all diagnostic checks
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+      - opinionated
+    disabled-checks:
+      # These can be noisy
+      - hugeParam
+      - rangeValCopy
+
+  goimports:
+    # Local prefixes for import grouping
+    local-prefixes: github.com/yourorg
+
+  misspell:
+    locale: US
+
+  revive:
+    # Confidence threshold
+    confidence: 0.8
+    rules:
+      # Essential rules
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unreachable-code
+      # Additional rules
+      - name: bare-return
+      - name: bool-literal-in-expr
+      - name: confusing-naming
+      - name: constant-logical-expr
+      - name: defer
+      - name: duplicated-imports
+      - name: early-return
+      - name: get-return
+      - name: identical-branches
+      - name: import-shadowing
+      - name: modifies-parameter
+      - name: modifies-value-receiver
+      - name: nested-structs
+      - name: optimize-operands-order
+      - name: range-val-address
+      - name: range-val-in-closure
+      - name: redundant-import-alias
+      - name: string-of-int
+      - name: struct-tag
+      - name: time-equal
+      - name: unconditional-recursion
+      - name: unnecessary-stmt
+      - name: unused-parameter
+      - name: unused-receiver
+      - name: useless-break
+      - name: waitgroup-by-value
+
+  stylecheck:
+    # Enable all checks
+    checks:
+      - all
+      # Disable noisy checks
+      - -ST1000  # Package comments
+      - -ST1003  # MixedCaps in package names (allow underscores in test packages)
+
+  gosec:
+    # Exclude certain rules
+    excludes:
+      - G104  # Audit errors not checked (errcheck handles this)
+    config:
+      # Global config
+      global:
+        # Enable audit mode
+        audit: true
+
+  wrapcheck:
+    # Packages to ignore
+    ignoreSigs:
+      - .Errorf(
+      - errors.New(
+      - errors.Unwrap(
+      - .Wrap(
+      - .Wrapf(
+      - .WithMessage(
+      - .WithMessagef(
+      - .WithStack(
+
+  testifylint:
+    # Enable all checks
+    enable-all: true
+
+issues:
+  # Maximum issues per linter
+  max-issues-per-linter: 50
+  # Maximum same issues
+  max-same-issues: 3
+  # Show all issues
+  exclude-use-default: false
+
+  exclude-rules:
+    # Allow longer functions in test files
+    - path: _test\.go
+      linters:
+        - dupl
+        - gocyclo
+        - goconst
+
+    # Allow dot imports in test files for testify
+    - path: _test\.go
+      linters:
+        - revive
+      text: "dot-imports"
+
+    # Allow unused params in interface implementations
+    - linters:
+        - unparam
+      text: "always receives"
+
+    # Exclude certain issues by text
+    - linters:
+        - stylecheck
+      text: "ST1000:"
+
+    # Allow certain patterns in generated files
+    - path: ".*\\.gen\\.go"
+      linters:
+        - dupl
+        - gocyclo
+        - goconst
+        - gocritic
+        - stylecheck
+
+    # Mock files are allowed more freedom
+    - path: "mock_.*\\.go"
+      linters:
+        - dupl
+        - unused
+        - unparam
+
+severity:
+  # Default severity for all issues
+  default-severity: warning
+  # Per-linter severity
+  rules:
+    - linters:
+        - gosec
+      severity: error
+    - linters:
+        - errcheck
+      severity: error

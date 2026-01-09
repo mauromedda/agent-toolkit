@@ -1,0 +1,67 @@
+# ABOUTME: Project configuration for idiomatic Python skill examples
+# ABOUTME: Uses uv package manager with Python 3.11.13 and Pydantic v2
+
+[project]
+name = "python-idiomatic-skill"
+version = "0.1.0"
+description = "Claude Code skill demonstrating idiomatic Python best practices"
+readme = "README.md"
+requires-python = "==3.11.13"
+dependencies = [
+    "pydantic[email]>=2.0.0,<3.0.0",
+    "pydantic-core>=2.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+    "mypy>=1.8.0",
+    "ruff>=0.3.0",
+]
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules --strict-markers"
+testpaths = ["tests", "src"]
+pythonpath = ["."]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = "src.models"
+# Pydantic's @computed_field on @property is a known mypy issue
+disable_error_code = ["prop-decorator"]
+
+[[tool.mypy.overrides]]
+module = "src.idioms"
+# Allow flexible key functions in sorting
+disable_error_code = ["arg-type"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # Pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+    "SIM",  # flake8-simplify
+    "RUF",  # Ruff-specific rules
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]

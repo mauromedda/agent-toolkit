@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+# ABOUTME: Git pre-commit hook for Go projects
+# ABOUTME: Runs format check, go vet, golangci-lint, and go mod tidy verification
+
+set -euo pipefail
+
+readonly GOLANGCI_LINT_VERSION="v1.62.0"
+readonly REQUIRED_GO_VERSION="1.22"  # Minimum supported; 1.26 preferred
+
+# Colors for output
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[0;33m'
+readonly NC='\033[0m'  # No Color
+
+log_error() { echo -e "${RED}$1${NC}" >&2; }
+log_success() { echo -e "${GREEN}$1${NC}"; }
+log_warn() { echo -e "${YELLOW}$1${NC}"; }
+
+echo "Running Go pre-commit checks..."
+echo ""
+
+# Check if go is installed
+if ! command -v go &> /dev/null; then
+    log_error "Go is not installed"
+    exit 1
+fi
+
+# Verify Go version
+GO_VERSION=$(go version | grep -oE 'go[0-9]+\.[0-9]+' | sed 's/go//')
+if [[ -z "${GO_VERSION}" ]]; then
+    log_error "Could not determine Go version"
+    exit 1
+fi
+
+# Compare versions (basic check)
+GO_MAJOR=$(echo "${GO_VERSION}" | cut -d. -f1)
+GO_MINOR=$(echo "${GO_VERSION}" | cut -d. -f2)
+REQ_MAJOR=$(echo "${REQUIRED_GO_VERSION}" | cut -d. -f1)
+REQ_MINOR=$(echo "${REQUIRED_GO_VERSION}" | cut -d. -f2)
+
+if (( GO_MAJOR < REQ_MAJOR || (GO_MAJOR == REQ_MAJOR && GO_MINOR < REQ_MINOR) )); then
+    log_error "Go version must be >= ${REQUIRED_GO_VERSION} (found: ${GO_VERSION})"
+    exit 1
+fi
+
+log_success "Go version: ${GO_VERSION}"
+
+# Find Go files that are staged for commit
+STAGED_GO_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$' || true)
+
+if [[ -z "${STAGED_GO_FILES}" ]]; then
+    echo "No Go files staged for commit; skipping Go checks"
+    exit 0
+fi
+
+echo "Checking staged Go files..."
+echo ""
+
+# Format check (fail if files need formatting)
+echo "Checking formatting..."
+UNFORMATTED=""
+for file in ${STAGED_GO_FILES}; do
+    if [[ -f "${file}" ]]; then
+        FMT_OUTPUT=$(gofmt -l "${file}")
+        if [[ -n "${FMT_OUTPUT}" ]]; then
+            UNFORMATTED="${UNFORMATTED}${FMT_OUTPUT}"$'\n'
+        fi
+    fi
+done
+
+if [[ -n "${UNFORMATTED}" ]]; then
+    log_error "Files need formatting:"
+    echo "${UNFORMATTED}"
+    echo "Run: gofmt -w <file>"
+    exit 1
+fi
+log_success "Formatting OK"
+
+# Go vet on staged files
+echo "Running go vet..."
+PACKAGES=$(echo "${STAGED_GO_FILES}" | xargs -n1 dirname | sort -u | sed 's|^|./|')
+if ! go vet ${PACKAGES} 2>&1; then
+    log_error "go vet failed"
+    exit 1
+fi
+log_success "go vet OK"
+
+# golangci-lint
+echo "Running golangci-lint..."
+if command -v golangci-lint &> /dev/null; then
+    # Run on staged files only for speed
+    if ! golangci-lint run --new-from-rev=HEAD~1 ${PACKAGES} 2>&1; then
+        log_error "golangci-lint failed"
+        exit 1
+    fi
+    log_success "golangci-lint OK"
+else
+    log_warn "golangci-lint not installed; skipping..."
+    echo "   Install with: go install github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}"
+fi
+
+# go mod tidy check
+if [[ -f "go.mod" ]]; then
+    echo "Checking go.mod tidiness..."
+
+    # Create backups
+    cp go.mod go.mod.backup
+    if [[ -f "go.sum" ]]; then
+        cp go.sum go.sum.backup
+    fi
+
+    go mod tidy
+
+    # Compare
+    if ! diff -q go.mod go.mod.backup > /dev/null 2>&1; then
+        log_error "go.mod is not tidy"
+        mv go.mod.backup go.mod
+        [[ -f go.sum.backup ]] && mv go.sum.backup go.sum
+        echo "Run: go mod tidy"
+        exit 1
+    fi
+
+    # Cleanup backups
+    rm -f go.mod.backup go.sum.backup
+    log_success "go.mod is tidy"
+fi
+
+echo ""
+log_success "All pre-commit checks passed!"
