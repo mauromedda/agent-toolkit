@@ -7,8 +7,10 @@ description: >-
   "bash function", "shellcheck", "bash template", "pre-commit hook", "deploy script",
   "build script", "install script", "setup script", "bash error handling", "bash arrays",
   "bash loop", "bash conditional", "parse arguments", "getopts", "bash logging",
-  "#!/bin/bash", "source script", "dot script", "shell function".
-  PROACTIVE: MUST invoke when writing ANY .sh file or pre-commit hook.
+  "#!/bin/bash", "source script", "dot script", "shell function",
+  "edit script", "update script", "modify script", "change script",
+  "edit .sh", "update .sh", "modify .sh", "statusline.sh", "hook script".
+  PROACTIVE: MUST invoke BEFORE editing/writing ANY .sh file or pre-commit hook.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -20,6 +22,28 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 **Target**: Bash 4.0+ with mandatory ShellCheck compliance.
 
 **Detailed patterns**: See `references/script-template.md` and `references/advanced-patterns.md`
+
+---
+
+## 🚨 PROACTIVE INVOCATION REQUIRED
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  BEFORE using Edit/Write on ANY .sh file:                   │
+│                                                             │
+│  1. CHECK the file extension - is it .sh?                   │
+│  2. If YES → This skill MUST be active                      │
+│  3. If skill not loaded → STOP and invoke /bash first       │
+│                                                             │
+│  This applies even if the user didn't mention "bash" or     │
+│  "script" - file extension is the trigger!                  │
+│                                                             │
+│  Examples that require /bash skill:                         │
+│  - "update the statusline" (edits statusline.sh)            │
+│  - "add a feature to the hook" (edits pre-commit)           │
+│  - "fix the deploy script" (edits deploy.sh)                │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
