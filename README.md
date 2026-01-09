@@ -1,5 +1,9 @@
 # Agent Toolkit
 
+<p align="center">
+  <img src="assets/hero.png" alt="Agent Toolkit - AI-powered development with Claude Code" width="600">
+</p>
+
 A collection of production-quality skills, tools, and patterns for AI-powered development workflows with [Claude Code](https://claude.ai/code).
 
 ## Overview
