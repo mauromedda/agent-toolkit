@@ -18,10 +18,13 @@ ICON_FOLDER="📁"
 ICON_BRANCH="🌿"
 ICON_MODEL="🍵"
 ICON_COST="💰"
+ICON_SESSION="🔗"
 
-# Estrai modello e directory corrente
+# Estrai modello, directory e session ID
 MODEL_DISPLAY=$(echo "$input" | jq -r '.model.display_name // "Unknown"')
 CURRENT_DIR=$(echo "$input" | jq -r '.workspace.current_dir // "."')
+SESSION_ID=$(echo "$input" | jq -r '.session_id // "unknown"')
+SESSION_ID_SHORT="${SESSION_ID:0:8}"
 
 # Mostra il path con ~ per la home directory
 DIR_DISPLAY="${CURRENT_DIR/#$HOME/~}"
@@ -89,13 +92,13 @@ if [[ "$CTX_SIZE" != "0" && "$CTX_SIZE" != "null" ]]; then
 fi
 
 # Costruisci output
-OUTPUT="${ICON_FOLDER} ${BLUE}${DIR_DISPLAY}${RESET}${GIT_BRANCH}  ${ICON_MODEL} ${ORANGE}${MODEL_DISPLAY}${RESET}${COST_DISPLAY}${CTX_DISPLAY}"
-OUTPUT_PLAIN="${DIR_DISPLAY}${GIT_BRANCH_PLAIN}  ${MODEL_DISPLAY}${COST_PLAIN}${CTX_PLAIN}"
+OUTPUT="${ICON_SESSION} ${DIM}${SESSION_ID}${RESET}  ${ICON_FOLDER} ${BLUE}${DIR_DISPLAY}${RESET}${GIT_BRANCH}  ${ICON_MODEL} ${ORANGE}${MODEL_DISPLAY}${RESET}${COST_DISPLAY}${CTX_DISPLAY}"
+OUTPUT_PLAIN="${SESSION_ID}  ${DIR_DISPLAY}${GIT_BRANCH_PLAIN}  ${MODEL_DISPLAY}${COST_PLAIN}${CTX_PLAIN}"
 
 # Calcola larghezza terminale e padding per right-align
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 120)
 # Account for emoji width (each emoji takes ~2 cells)
-EMOJI_COUNT=4
+EMOJI_COUNT=5
 [[ -n "$GIT_BRANCH" ]] && EMOJI_COUNT=$((EMOJI_COUNT + 1))
 [[ -n "$COST_DISPLAY" ]] && EMOJI_COUNT=$((EMOJI_COUNT + 1))
 [[ -n "$CTX_DISPLAY" ]] && EMOJI_COUNT=$((EMOJI_COUNT + 1))
