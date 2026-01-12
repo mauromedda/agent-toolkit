@@ -87,6 +87,7 @@ agent-toolkit/
     ├── trivy/                # Security scanning skill
     ├── gemini-review/        # Code review with Gemini
     ├── web-automation/       # Playwright E2E testing
+    ├── spec-driven-dev/      # Spec-driven development workflow
     ├── skill-creator/        # Create new skills
     └── improve-skill/        # Improve existing skills
 ```
@@ -111,6 +112,7 @@ agent-toolkit/
 | **trivy** | Security vulnerability scanning before commit | `trivy`, `vulnerability scan`, `security` |
 | **gemini-review** | Design and code review with Gemini | `code review`, `gemini review` |
 | **web-automation** | E2E testing and browser automation | `e2e test`, `playwright` |
+| **spec-driven-dev** | Spec-driven development with iterative refinement | `/spec.plan`, `/spec.refine`, `/spec.tasks`, `/spec.run` |
 
 ### Architecture Skills
 

@@ -25,7 +25,7 @@ agent-toolkit/
 | Category | Skills |
 |----------|--------|
 | **Language** | `bash`, `golang`, `python`, `make`, `terraform` |
-| **Workflow** | `scm`, `trivy`, `gemini-review`, `web-automation` |
+| **Workflow** | `scm`, `trivy`, `gemini-review`, `web-automation`, `spec-driven-dev` |
 | **Architecture** | `design-patterns`, `ast-grep` |
 | **Meta** | `skill-creator`, `improve-skill` |
 
