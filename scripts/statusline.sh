@@ -1,10 +1,10 @@
 #!/bin/bash
-# ABOUTME: Status line per Claude Code con modello, directory, branch, costo e contesto
-# ABOUTME: Riceve JSON da stdin e formatta l'output per la status line (right-aligned)
+# ABOUTME: Status line for Claude Code displaying model, directory, branch, cost, and context
+# ABOUTME: Receives JSON from stdin and formats output for the status line (right-aligned)
 
 input=$(cat)
 
-# Colori Claude Code (ANSI true color)
+# Claude Code colors (ANSI true color)
 ORANGE='\033[38;2;217;119;87m'   # Claude orange/coral
 BLUE='\033[38;2;147;178;214m'    # Light blue
 GREEN='\033[38;2;134;188;134m'   # Soft green
@@ -20,16 +20,16 @@ ICON_MODEL="🍵"
 ICON_COST="💰"
 ICON_SESSION="🔗"
 
-# Estrai modello, directory e session ID
+# Extract model, directory, and session ID
 MODEL_DISPLAY=$(echo "$input" | jq -r '.model.display_name // "Unknown"')
 CURRENT_DIR=$(echo "$input" | jq -r '.workspace.current_dir // "."')
 SESSION_ID=$(echo "$input" | jq -r '.session_id // "unknown"')
 SESSION_ID_SHORT="${SESSION_ID:0:8}"
 
-# Mostra il path con ~ per la home directory
+# Display path with ~ for home directory
 DIR_DISPLAY="${CURRENT_DIR/#$HOME/~}"
 
-# Mostra il branch git se siamo in un repo
+# Display git branch if inside a repository
 GIT_BRANCH=""
 GIT_BRANCH_PLAIN=""
 if git -C "$CURRENT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
@@ -41,7 +41,7 @@ if git -C "$CURRENT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
     fi
 fi
 
-# Estrai costo sessione
+# Extract session cost
 COST=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
 COST_DISPLAY=""
 COST_PLAIN=""
@@ -51,7 +51,7 @@ if [[ "$COST" != "0" && "$COST" != "null" ]]; then
     COST_PLAIN="  \$${COST_FMT}"
 fi
 
-# Estrai utilizzo contesto e genera progress bar
+# Extract context usage and generate progress bar
 CTX_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
 INPUT_TOKENS=$(echo "$input" | jq -r '.context_window.current_usage.input_tokens // 0')
 CACHE_CREATE=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
@@ -64,13 +64,13 @@ if [[ "$CTX_SIZE" != "0" && "$CTX_SIZE" != "null" ]]; then
     if [[ "$CURRENT_TOKENS" -gt 0 ]]; then
         PERCENT=$((CURRENT_TOKENS * 100 / CTX_SIZE))
 
-        # Progress bar (10 blocchi)
+        # Progress bar (10 blocks)
         BAR_WIDTH=10
         FILLED=$((PERCENT * BAR_WIDTH / 100))
         [[ "$FILLED" -gt "$BAR_WIDTH" ]] && FILLED=$BAR_WIDTH
         EMPTY=$((BAR_WIDTH - FILLED))
 
-        # Scegli colore in base alla percentuale
+        # Choose color based on percentage
         if [[ "$PERCENT" -lt 50 ]]; then
             BAR_COLOR="$GREEN"
             ICON_CTX="🟢"
@@ -82,7 +82,7 @@ if [[ "$CTX_SIZE" != "0" && "$CTX_SIZE" != "null" ]]; then
             ICON_CTX="🔴"
         fi
 
-        # Costruisci barra
+        # Build progress bar
         BAR_FILLED=$(printf '█%.0s' $(seq 1 $FILLED 2>/dev/null) || true)
         BAR_EMPTY=$(printf '░%.0s' $(seq 1 $EMPTY 2>/dev/null) || true)
 
@@ -91,11 +91,11 @@ if [[ "$CTX_SIZE" != "0" && "$CTX_SIZE" != "null" ]]; then
     fi
 fi
 
-# Costruisci output
+# Build output
 OUTPUT="${ICON_SESSION} ${DIM}${SESSION_ID}${RESET}  ${ICON_FOLDER} ${BLUE}${DIR_DISPLAY}${RESET}${GIT_BRANCH}  ${ICON_MODEL} ${ORANGE}${MODEL_DISPLAY}${RESET}${COST_DISPLAY}${CTX_DISPLAY}"
 OUTPUT_PLAIN="${SESSION_ID}  ${DIR_DISPLAY}${GIT_BRANCH_PLAIN}  ${MODEL_DISPLAY}${COST_PLAIN}${CTX_PLAIN}"
 
-# Calcola larghezza terminale e padding per right-align
+# Calculate terminal width and padding for right-align
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 120)
 # Account for emoji width (each emoji takes ~2 cells)
 EMOJI_COUNT=5
@@ -107,6 +107,6 @@ TEXT_LEN=${#OUTPUT_PLAIN}
 PADDING=$((TERM_WIDTH - TEXT_LEN - EMOJI_COUNT))
 [[ "$PADDING" -lt 0 ]] && PADDING=0
 
-# Output con padding a sinistra
+# Output with left padding
 printf "%${PADDING}s" ""
 echo -e "$OUTPUT"
