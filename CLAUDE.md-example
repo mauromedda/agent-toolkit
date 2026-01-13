@@ -13,6 +13,7 @@
 | **Bash Skill** | Writing .sh files | 🚨 MUST invoke `/bash` BEFORE writing |
 | **Go Skill** | Writing .go files | 🚨 MUST invoke `/golang` BEFORE writing |
 | **Make Skill** | Writing Makefile/*.mk | 🚨 MUST invoke `/make` BEFORE writing |
+| **Context Compaction** | Session resume / compaction | 🚨 Re-invoke active language skills IMMEDIATELY |
 
 ---
 
@@ -218,6 +219,33 @@ I will operate under this tiered autonomy model:
 # Long Task Execution
 
 **CRITICAL**: Do not interrupt long-running tasks (builds, tests, deployments, scans) due to context compaction or cleanup operations. Continue until task completion, explicit user interruption, or critical error. Provide progress updates for operations >30s.
+
+# Context Compaction & Skill Persistence
+
+**🚨 CRITICAL**: When context is compacted or a session resumes, skill state is lost. To maintain consistency:
+
+## On Session Resume / Context Compaction
+1. **Identify active work context**: Check what file types are being worked on
+2. **Re-invoke relevant skills IMMEDIATELY** before continuing work:
+   - Working on `.py` files → `/python`
+   - Working on `.sh` files → `/bash`
+   - Working on `.go` files → `/golang`
+   - Working on `Makefile`/`*.mk` → `/make`
+   - Working on `.tf`/`.hcl` → `/terraform`
+3. **Re-invoke Gemini review skill** if implementation review was in progress
+
+## Indicators of Context Compaction
+- System message about "context compaction" or "summarization"
+- Loss of specific implementation details from earlier in conversation
+- Sudden shift in conversation continuity
+
+## Self-Check After Compaction
+Before continuing any coding task, ask:
+- [ ] What file types am I working with?
+- [ ] Have I re-loaded the appropriate language skill?
+- [ ] Was there a pending Gemini review?
+
+**This ensures code quality standards are maintained even when context window limits are reached.**
 
 # COMMIT
 - Don't add the claude signature to the commit
