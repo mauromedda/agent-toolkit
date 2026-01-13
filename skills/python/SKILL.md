@@ -9,8 +9,10 @@ description: >-
   "context manager", "with statement", "exception handling", "try except", "raise",
   "logging python", "argparse", "click", "typer", "__init__", "__main__", "import",
   "from import", "python module", "python package", "requirements.txt", "pyproject.toml",
-  "ruff", "mypy", "black", "isort", "python testing", "fixture", "parametrize".
-  PROACTIVE: MUST invoke when writing ANY .py file.
+  "ruff", "mypy", "black", "isort", "python testing", "fixture", "parametrize",
+  "edit .py", "modify .py", "update .py", "change .py", "fix .py", "refactor .py",
+  "edit python", "modify python", "update python", "change python", "fix python code".
+  PROACTIVE: MUST invoke BEFORE using Write OR Edit on ANY .py file.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

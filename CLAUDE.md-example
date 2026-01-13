@@ -9,10 +9,10 @@
 | **ABOUTME** | Every new file | 2-line header comment |
 | **Boy Scout** | Every commit | Delete unused code |
 | **Conventional Commits** | Every commit | feat/fix/docs/style/refactor/test/chore |
-| **Python Skill** | Writing .py files | 🚨 MUST invoke `/python` BEFORE writing |
-| **Bash Skill** | Writing .sh files | 🚨 MUST invoke `/bash` BEFORE writing |
-| **Go Skill** | Writing .go files | 🚨 MUST invoke `/golang` BEFORE writing |
-| **Make Skill** | Writing Makefile/*.mk | 🚨 MUST invoke `/make` BEFORE writing |
+| **Python Skill** | Writing/Editing .py files | 🚨 MUST invoke `/python` BEFORE Write or Edit |
+| **Bash Skill** | Writing/Editing .sh files | 🚨 MUST invoke `/bash` BEFORE Write or Edit |
+| **Go Skill** | Writing/Editing .go files | 🚨 MUST invoke `/golang` BEFORE Write or Edit |
+| **Make Skill** | Writing/Editing Makefile/*.mk | 🚨 MUST invoke `/make` BEFORE Write or Edit |
 | **Context Compaction** | Session resume / compaction | 🚨 Re-invoke active language skills IMMEDIATELY |
 
 ---
@@ -123,12 +123,12 @@ I will operate under this tiered autonomy model:
 
 ## Language Skills
 
-**🚨 PROACTIVE INVOCATION REQUIRED**: Invoke language skills BEFORE writing code files, not just when keywords appear in conversation.
+**🚨 PROACTIVE INVOCATION REQUIRED**: Invoke language skills BEFORE writing OR editing code files, not just when keywords appear in conversation.
 
 **Automatic Routing**: Skills are discovered via their `description` field in frontmatter. Claude matches requests to skills semantically.
 
-| Skill | File Types | Invoke BEFORE Writing |
-|-------|------------|----------------------|
+| Skill | File Types | Invoke BEFORE Write/Edit |
+|-------|------------|--------------------------|
 | `python` | `.py` | `/python` |
 | `bash` | `.sh`, `pre-commit` | `/bash` |
 | `golang` | `.go` | `/golang` |
@@ -136,8 +136,10 @@ I will operate under this tiered autonomy model:
 | `terraform` | `.tf`, `.hcl` | `/terraform` |
 
 **Trigger conditions:**
-1. **File-based (MANDATORY)**: When about to write/create a file with matching extension
+1. **File-based (MANDATORY)**: When about to use `Write` OR `Edit` tool on a file with matching extension
 2. **Keyword-based (automatic)**: When user mentions "pythonic", "bash script", "go patterns", etc.
+
+**🚨 CRITICAL**: The `Edit` tool counts as "writing code". If you're about to modify a `.py` file with `Edit`, you MUST invoke `/python` first.
 
 **Key enforcements:**
 - **Python**: Type hints (3.11+), Pydantic v2 for APIs, TypedDict for external data, comprehensions over loops
