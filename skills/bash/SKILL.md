@@ -25,25 +25,36 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 ---
 
-## 🚨 PROACTIVE INVOCATION REQUIRED
+## 🛑 FILE OPERATION CHECKPOINT (BLOCKING)
+
+**Before EVERY `Write` or `Edit` tool call on a `.sh` file or shell script:**
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  BEFORE using Edit/Write on ANY .sh file:                   │
-│                                                             │
-│  1. CHECK the file extension - is it .sh?                   │
-│  2. If YES → This skill MUST be active                      │
-│  3. If skill not loaded → STOP and invoke /bash first       │
-│                                                             │
-│  This applies even if the user didn't mention "bash" or     │
-│  "script" - file extension is the trigger!                  │
-│                                                             │
-│  Examples that require /bash skill:                         │
-│  - "update the statusline" (edits statusline.sh)            │
-│  - "add a feature to the hook" (edits pre-commit)           │
-│  - "fix the deploy script" (edits deploy.sh)                │
-└─────────────────────────────────────────────────────────────┘
+╔══════════════════════════════════════════════════════════════════╗
+║  🛑 STOP - BASH SKILL CHECK                                      ║
+║                                                                  ║
+║  You are about to modify a shell script.                         ║
+║                                                                  ║
+║  QUESTION: Is /bash skill currently active?                      ║
+║                                                                  ║
+║  If YES → Proceed with the edit                                  ║
+║  If NO  → STOP! Invoke /bash FIRST, then edit                    ║
+║                                                                  ║
+║  This check applies to:                                          ║
+║  ✗ Write tool with file_path ending in .sh                       ║
+║  ✗ Edit tool with file_path ending in .sh                        ║
+║  ✗ Files named "pre-commit", "post-commit", etc. (git hooks)     ║
+║  ✗ ANY shell script, regardless of conversation topic            ║
+║                                                                  ║
+║  Examples that REQUIRE this skill:                               ║
+║  - "update the statusline" (edits statusline.sh)                 ║
+║  - "add a feature to the hook" (edits pre-commit)                ║
+║  - "fix the deploy script" (edits deploy.sh)                     ║
+╚══════════════════════════════════════════════════════════════════╝
 ```
+
+**Why this matters:** Shell scripts without proper safety headers (`set -euo pipefail`)
+can fail silently or cause data corruption. The skill ensures ShellCheck compliance.
 
 ---
 
@@ -88,6 +99,7 @@ If script exceeds ~200 lines, consider Python or Go.
 │  2. Are all variables quoted: "${var}"?                     │
 │  3. Using [[ ]] conditionals (not [ ])?                     │
 │  4. Run: shellcheck <script>.sh                             │
+│  5. Re-invoke /bash if skill context was lost               │
 └─────────────────────────────────────────────────────────────┘
 ```
 

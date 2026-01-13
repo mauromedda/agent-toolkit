@@ -30,6 +30,36 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 | Functions | ≤50 lines, ≤4 params, single responsibility |
 | Duplication | Rule of Three before abstracting |
 
+## 🛑 FILE OPERATION CHECKPOINT (BLOCKING)
+
+**Before EVERY `Write` or `Edit` tool call on a `.go` file:**
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║  🛑 STOP - GO SKILL CHECK                                        ║
+║                                                                  ║
+║  You are about to modify a .go file.                             ║
+║                                                                  ║
+║  QUESTION: Is /golang skill currently active?                    ║
+║                                                                  ║
+║  If YES → Proceed with the edit                                  ║
+║  If NO  → STOP! Invoke /golang FIRST, then edit                  ║
+║                                                                  ║
+║  This check applies to:                                          ║
+║  ✗ Write tool with file_path ending in .go                       ║
+║  ✗ Edit tool with file_path ending in .go                        ║
+║  ✗ ANY Go file, regardless of conversation topic                 ║
+║                                                                  ║
+║  Examples that REQUIRE this skill:                               ║
+║  - "add error handling" (edits .go file)                         ║
+║  - "fix the test" (edits _test.go file)                          ║
+║  - "update the handler" (edits handler.go)                       ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+**Why this matters:** Go code without proper error wrapping (`fmt.Errorf %w`) loses
+context. The skill ensures idiomatic patterns and golangci-lint compliance.
+
 ## 🔄 RESUMED SESSION CHECKPOINT
 
 **When a session is resumed from context compaction, verify Go development state:**
@@ -57,6 +87,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 │  → Review the partial code for completeness                 │
 │  → Ensure all errors are handled and wrapped                │
 │  → Verify golangci-lint passes with no warnings             │
+│  → Re-invoke /golang if skill context was lost              │
 └─────────────────────────────────────────────────────────────┘
 ```
 

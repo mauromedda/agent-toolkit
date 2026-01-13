@@ -44,6 +44,38 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 ---
 
+## 🛑 FILE OPERATION CHECKPOINT (BLOCKING)
+
+**Before EVERY `Write` or `Edit` tool call on a `.py` file:**
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║  🛑 STOP - PYTHON SKILL CHECK                                    ║
+║                                                                  ║
+║  You are about to modify a .py file.                             ║
+║                                                                  ║
+║  QUESTION: Is /python skill currently active?                    ║
+║                                                                  ║
+║  If YES → Proceed with the edit                                  ║
+║  If NO  → STOP! Invoke /python FIRST, then edit                  ║
+║                                                                  ║
+║  This check applies to:                                          ║
+║  ✗ Write tool with file_path ending in .py                       ║
+║  ✗ Edit tool with file_path ending in .py                        ║
+║  ✗ ANY Python file, regardless of conversation topic             ║
+║                                                                  ║
+║  Examples that REQUIRE this skill:                               ║
+║  - "update the schemas" (edits schemas.py)                       ║
+║  - "fix the import" (edits any .py file)                         ║
+║  - "add logging" (edits Python code)                             ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+**Why this matters:** In session 1ea73ffd, Claude edited 3+ Python files without
+invoking the Python skill, leading to potential style/pattern inconsistencies.
+
+---
+
 ## 🔄 RESUMED SESSION CHECKPOINT
 
 ```
@@ -55,6 +87,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 │  2. Pydantic v2 for API validation?                         │
 │  3. ABOUTME headers on new files?                           │
 │  4. Run: ruff check <file>.py && mypy <file>.py             │
+│  5. Re-invoke /python if skill context was lost             │
 └─────────────────────────────────────────────────────────────┘
 ```
 

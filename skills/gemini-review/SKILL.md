@@ -25,23 +25,50 @@ allowed-tools: Bash
 
 Invoke Gemini for collaborative design and code review.
 
-## 🚨 SELF-CHECK: Call Gemini Now?
+## 🛑 COMPLETION TRIGGER DETECTION
 
-**Run this checklist BEFORE running tests, summarizing, or committing:**
+**STOP IMMEDIATELY when you catch yourself saying/thinking:**
+
+| Trigger Phrase | Action |
+|----------------|--------|
+| "All tasks are complete" | ❌ STOP → Check Gemini threshold |
+| "Let me run the tests" | ❌ STOP → Check Gemini threshold |
+| "Now let me commit" | ❌ STOP → Check Gemini threshold |
+| "I've finished implementing" | ❌ STOP → Check Gemini threshold |
+| "Let me provide a summary" | ❌ STOP → Check Gemini threshold |
+| "Implementation is done" | ❌ STOP → Check Gemini threshold |
+| Marking last todo as "completed" | ❌ STOP → Check Gemini threshold |
+
+**These phrases are BLOCKING triggers.** You MUST NOT proceed until you've verified Gemini review status.
+
+## 🚨 MANDATORY THRESHOLD CHECK
+
+**This is a BLOCKING checkpoint. Execute BEFORE tests/summary/commit:**
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  GEMINI REVIEW REQUIRED?                                    │
-│                                                             │
-│  Count your changes:                                        │
-│  □ Modified/created more than 3 files with logic changes?   │
-│  □ Wrote more than 100 lines of code?                       │
-│  □ Touched security or performance code?                    │
-│                                                             │
-│  ANY YES → STOP AND CALL GEMINI NOW                         │
-│  ALL NO  → Skip Gemini, proceed to tests                    │
-└─────────────────────────────────────────────────────────────┘
+╔══════════════════════════════════════════════════════════════════╗
+║  🛑 STOP - GEMINI REVIEW CHECKPOINT                              ║
+║                                                                  ║
+║  STEP 1: Count your changes                                      ║
+║  Run: git diff --stat | tail -5                                  ║
+║                                                                  ║
+║  STEP 2: Check thresholds                                        ║
+║  □ Modified/created MORE than 3 files with logic changes?        ║
+║  □ Wrote MORE than 100 lines of code?                            ║
+║  □ Touched security or performance code?                         ║
+║                                                                  ║
+║  STEP 3: Take action                                             ║
+║  ANY YES → CALL GEMINI NOW (before tests, before summary)        ║
+║  ALL NO  → Skip Gemini, proceed to tests                         ║
+║                                                                  ║
+║  ⚠️  DO NOT mark todos complete until this check passes          ║
+║  ⚠️  DO NOT run tests until this check passes                    ║
+║  ⚠️  DO NOT provide summary until this check passes              ║
+╚══════════════════════════════════════════════════════════════════╝
 ```
+
+**Why this matters:** In session 1ea73ffd, Claude modified 8+ files with 300+ lines
+but skipped Gemini review entirely. This checkpoint prevents that failure mode.
 
 ## 🔄 RESUMED SESSION CHECKPOINT
 

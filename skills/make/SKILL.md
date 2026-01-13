@@ -30,6 +30,37 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 | **Naming** | Hyphen-case; verb-noun prefixes (e.g., `stack-up`) |
 | **Help Default** | `.DEFAULT_GOAL := help` |
 
+## 🛑 FILE OPERATION CHECKPOINT (BLOCKING)
+
+**Before EVERY `Write` or `Edit` tool call on a `Makefile` or `*.mk` file:**
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║  🛑 STOP - MAKE SKILL CHECK                                      ║
+║                                                                  ║
+║  You are about to modify a Makefile.                             ║
+║                                                                  ║
+║  QUESTION: Is /make skill currently active?                      ║
+║                                                                  ║
+║  If YES → Proceed with the edit                                  ║
+║  If NO  → STOP! Invoke /make FIRST, then edit                    ║
+║                                                                  ║
+║  This check applies to:                                          ║
+║  ✗ Write tool with file_path containing "Makefile"               ║
+║  ✗ Edit tool with file_path containing "Makefile"                ║
+║  ✗ Write/Edit with file_path ending in .mk                       ║
+║  ✗ ANY Makefile, regardless of conversation topic                ║
+║                                                                  ║
+║  Examples that REQUIRE this skill:                               ║
+║  - "add a build target" (edits Makefile)                         ║
+║  - "update the docker targets" (edits make/docker.mk)            ║
+║  - "fix the help target" (edits any Makefile)                    ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+**Why this matters:** Makefiles without safety headers can fail silently or
+produce corrupt builds. The skill ensures `.DELETE_ON_ERROR` and proper `.PHONY`.
+
 ## 🔄 RESUMED SESSION CHECKPOINT
 
 **When a session is resumed from context compaction, verify Makefile development state:**
@@ -57,6 +88,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 │  → Review the partial Makefile for completeness             │
 │  → Ensure safety headers are present                        │
 │  → Verify no recipes exceed 5 lines (move to scripts)       │
+│  → Re-invoke /make if skill context was lost                │
 └─────────────────────────────────────────────────────────────┘
 ```
 

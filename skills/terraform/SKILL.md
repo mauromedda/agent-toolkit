@@ -30,6 +30,38 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 | State | Remote backend always; never local for shared infra |
 | Modules | Input validation, sensible defaults, documented outputs |
 
+## 🛑 FILE OPERATION CHECKPOINT (BLOCKING)
+
+**Before EVERY `Write` or `Edit` tool call on a `.tf` or `.hcl` file:**
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║  🛑 STOP - TERRAFORM SKILL CHECK                                 ║
+║                                                                  ║
+║  You are about to modify a Terraform/Terragrunt file.            ║
+║                                                                  ║
+║  QUESTION: Is /terraform skill currently active?                 ║
+║                                                                  ║
+║  If YES → Proceed with the edit                                  ║
+║  If NO  → STOP! Invoke /terraform FIRST, then edit               ║
+║                                                                  ║
+║  This check applies to:                                          ║
+║  ✗ Write tool with file_path ending in .tf                       ║
+║  ✗ Edit tool with file_path ending in .tf                        ║
+║  ✗ Write/Edit with file_path ending in .hcl                      ║
+║  ✗ Files named terragrunt.hcl                                    ║
+║  ✗ ANY Terraform file, regardless of conversation topic          ║
+║                                                                  ║
+║  Examples that REQUIRE this skill:                               ║
+║  - "add a new resource" (edits main.tf)                          ║
+║  - "update the variables" (edits variables.tf)                   ║
+║  - "configure the backend" (edits terragrunt.hcl)                ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+**Why this matters:** Terraform code with hardcoded secrets or missing validations
+creates security risks. The skill ensures remote state and proper variable handling.
+
 ## 🔄 RESUMED SESSION CHECKPOINT
 
 **When a session is resumed from context compaction, verify Terraform development state:**
@@ -58,6 +90,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 │  → Review the partial code for completeness                 │
 │  → Ensure all resources have proper naming                  │
 │  → Verify no sensitive data in outputs                      │
+│  → Re-invoke /terraform if skill context was lost           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
